@@ -7,14 +7,6 @@ class ObjValue {
         $this->value = $value;
     }
 
-    public function asDate() {
-        return parse_date($this->value);
-    }
-
-    public function asInt() {
-        return intval($this->value);
-    }
-
     public function __toString() {
         return $this->value;
     }
