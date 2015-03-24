@@ -1,5 +1,9 @@
 foo: bar
+title: Meine erste App
+created: 1988-06-29
 bar:
+    #time: 2013-03-01T16:15:09+01:00
+    time: 1.12.2014
     foo: bar
     bar: baz
     baz:
