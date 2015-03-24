@@ -5,33 +5,48 @@ define('__PATH_PARAM__', 'q');
 require_once 'vendors/spyc.php';
 require_once 'vendors/underscore.php';
 
-
 require_once 'utils.php';
 require_once 'page.php';
 require_once 'router.php';
 
+class Castillo
+{
+    public static $root_path;
 
-$root_path = realpath(path_combine(__DIR__, '..'));
+    public function __construct() {
+        static::$root_path = (path_combine(__DIR__, '..'));
+    }
 
-$site = Page::fromDirectory(path_combine($root_path, 'content'));
+    private static function loadSite() {
+       return Page::fromDirectory(path_combine(static::$root_path, 'content'));
+    }
 
-$location = array_get($_GET, __PATH_PARAM__, '');
+    private static function loadPage($site, $location) {
+        error_log('Castillo: Accessing \''.$location.'\''); 
+        return Router::locatePage($site, $location);
+    }
 
-echo 'location: ', $location.'<br />';
+    private static function loadTemplate($template) {
+        $filename = $template.'.php';
+        $filepath = realpath(path_combine(static::$root_path, 'templates', $filename));
 
-$page = Router::locatePage($site, $location);
+        if (empty($filepath)){
+            error_log('Castillo: No template named \''.$filename.'\''); 
+            return 'error.php';
+        }
 
-echo 'page: ', $page->name().'<br />';
+        error_log('Castillo: Loaded template \''.$filename.'\''); 
 
-echo "searching for template: ". $page->template() ."<br />";
+        return $filepath;
+    }
 
-$template_path = realpath(path_combine($root_path, 'templates', $page->template().'.php'));
-if (empty($template_path)){
-    exit('<html>Error</html>');
+    public function render(){
+        $site = static::loadSite();
+        $page = static::loadPage($site, $_SERVER["PATH_INFO"]);
+        include static::loadTemplate($page->template());
+    }
+        
 }
 
-echo 'template path: ', $template_path.'<br />';
-
-require $template_path;
 
 ?>

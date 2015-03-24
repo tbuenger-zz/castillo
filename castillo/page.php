@@ -2,11 +2,13 @@
 
 require_once 'core.php';
 require_once 'file.php';
+require_once 'blueprint.php';
 
-class Page extends ObjArray {
+class Page extends ValueCollection{
     public function __construct($directory) {
+        parent::__construct();
         $this->__directory__ = $directory;
-        $this->__name__ = escapename(pathinfo($directory, PATHINFO_FILENAME));
+        $this->__name__ = normalize_identifier(pathinfo($directory, PATHINFO_FILENAME));
         $this->__pages__ = array();
         $this->__files__ = array();
         $this->__template__ = 'default';
@@ -39,14 +41,12 @@ class Page extends ObjArray {
     public function addFile($filename) {
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         if ($ext == 'yaml') {
-            $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
-            $this->embedArray($yaml_content);
-            $this->__template__ = escapename(pathinfo($filename, PATHINFO_FILENAME));
+            $this->addYaml($filename);
         }
 
         if ($ext == 'jpeg') {
             $info = $this->addFileInfo($filename);
-            $info->embedArray(array('url'=>$filename));
+            $info->__append(array('url'=>$filename));
         }
 
         if ($ext == 'info') {
@@ -54,7 +54,7 @@ class Page extends ObjArray {
             $info = $this->addFileInfo($without_ext);
 
             $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
-            $info->embedArray($yaml_content);
+            $info->__append($yaml_content);
         }
     }
 
@@ -66,6 +66,17 @@ class Page extends ObjArray {
     public function addPage($page) {
         return array_get_or_create($this->__pages__, $page->name(), function() use ($page) {return $page;});
 
+    }
+
+    private function addYaml($filename) {
+        $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
+        $this->__template__ = normalize_identifier(pathinfo($filename, PATHINFO_FILENAME));
+
+        // read blueprint from template and parse then yaml
+        $blueprint = Blueprint::read($this->__template__);
+
+        
+        $this->__append($blueprint->parse($yaml_content));
     }
 
     public static function fromDirectory($dir) {

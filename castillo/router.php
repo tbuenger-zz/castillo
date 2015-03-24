@@ -18,10 +18,13 @@ class Router {
         $parts = array_filter(explode("/", $location), 'strlen');
         $current_page = $site;
         foreach ($parts as $part) {
-            $part = escapename($part);
+            $part = normalize_identifier($part);
             $next_page = $current_page->page($part);
             if (!$next_page)
+            {                
+                error_log('Castillo: No page for \''.$location.'\''); 
                 return new ErrorPage($site->directory());
+            }
             $current_page = $next_page;
         }
         return $current_page;

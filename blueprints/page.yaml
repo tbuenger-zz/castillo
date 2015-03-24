@@ -1,0 +1,27 @@
+fields:
+    title: 
+        type: text
+        label: Titel
+        description: Hier bitte den Titel hinterlegen
+    creator:
+        type: text
+        label: Ersteller
+    created:
+        type: date
+        label: Erstellungsdatum
+    performances:
+        type: list
+        label: Aufführungen
+        fields:
+            date:
+                type: date
+                label: Datum
+            role:
+                type: text
+                label: Rolle
+            house:
+                type: text
+                label: Opernhaus
+            place:
+                type: text
+                label: Ort

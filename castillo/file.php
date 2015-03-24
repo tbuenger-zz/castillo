@@ -2,11 +2,12 @@
 
 require_once 'core.php';
 
-class File extends ObjArray {
+class File extends ValueCollection {
     public function __construct($directory, $file) {
+        parent::__construct();
         $this->__directory__ = $directory;
         $this->__file__ = $file;
-        $this->__name__ = escapename(pathinfo($directory, PATHINFO_FILENAME));
+        $this->__name__ = normalize_identifier(pathinfo($directory, PATHINFO_FILENAME));
     }
 
     public function name() {

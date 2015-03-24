@@ -2,67 +2,98 @@
 
 require_once 'utils.php';
 
-class ObjValue {
-    public function __construct($value) {
-        $this->value = $value;
+class UndefinedValue {
+
+    public function __call($method, $arguments) {
+        return $this;
     }
 
     public function __toString() {
-        return $this->value;
+        return '[undefined]';
     }
+
 }
 
-class ObjArray extends stdClass implements ArrayAccess {
+class ValueCollection implements IteratorAggregate {
 
-    protected function embedArray($data) {
+    protected function __append($data) {
+        if (is_a($data, 'ValueCollection'))
+            return $this->__append($data->__items__);
         foreach($data as $key => $val) {
             if (is_array($val))
-                $val = ObjArray::fromArray($val);
-            else
-                $val = new ObjValue($val);
+                $val = new ValueCollection($val);
 
-            if (!isset($this->{$key}))
-                $this->{$key} = $val;
+            $this->__items__[$key] = $val;
         }
+        
     }
 
-    public static function fromArray($data = array()) {
-        $result = new ObjArray();
-        $result->embedArray($data);
-        return $result;
+    public function __construct($data = array()) {
+        $this->__items__ = array();
+        $this->__append($data);
     }
 
     public function __call($method, $arguments) {
-        if (null ===  self::$nullInstance)
-             self::$nullInstance = new ObjArray();
-        return isset($this->$method) ? $this->$method : self::$nullInstance;
+        if (isset($this->$method))
+            return $this->$method;
+        if (isset($this->__items__[$method]))
+            return $this->__items__[$method];
+        return new UndefinedValue();
     }
 
-    public function toArray() {
-        return (array)$this;
-    }
-
+    /*
     public function __toString() {
-        ob_start();
-        var_dump($this);
-        $result = ob_get_clean();
-        return $result;
+        $result = '{';
+        foreach($this->__items__ as $key => $val)
+        {
+            $result .= $key . ' => ';
+            if (is_a ($val, 'DateTime'))
+            {
+                $result .= $val->format('c'); 
+            }
+            else
+            {
+                $result .= $val;
+            }
+            $result .= '; ';
+        }
+        return rtrim($result, '; ').'}';
     }
-    static private $nullInstance = null;
+    */
+ 
+    public function toArray()
+    {
+        return $this->__items__;
+    }
+ 
+    public function getIterator()
+    {
+        return new ArrayIterator($this->__items__);
+    }
 
-    public function offsetSet($offset, $value) {
+    public function count() {
+        return count($this->__items__);
     }
 
-    public function offsetUnset($offset) {
+    public function reverse() {
+        return new ValueCollection(array_reverse($this->__items__));
     }
 
-    public function offsetExists($offset) {
-        return isset($this->$offset);
+    public function sortBy($key) {
+        if (is_string($key))
+        {
+            if ($key[0] == '-')
+                return $this->sortBy(substr($key, 1))->reverse();
+            $key = function($x) use ($key) {return $x->$key();};
+        }
+        return new ValueCollection(__::sortBy($this->__items__, $key));
     }
 
-    public function offsetGet($offset) {
-        return isset($this->$offset) ? $this->$offset : null;
+    public function filter($condition) {
+        return new ValueCollection(array_filter($this->__items__, $condition));
     }
+
+
 }
 
 ?>

@@ -46,10 +46,10 @@ function parse_date($time) {
 
 function parse_boolean($value) {
     $value = strtolower(trim($value));
-    return in_array($value, ['true', 'yes', '1'])
+    return in_array($value, ['true', 'yes', '1']);
 }
 
-function escapename($filename) {
+function normalize_identifier($filename) {
     return strtolower(str_replace('.', '_', $filename));
 }
 
