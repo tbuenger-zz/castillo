@@ -15,4 +15,25 @@ am <?= $page->created()->format('d.m.Y') ?>.</p>
     <?php endforeach ?>
 </ul>
 
+<h2>Files: <?php echo $page->files()->count() ?></h2>
+<ul>
+    <?php foreach($page->files() as $img):?>
+        <li>
+            <div><?= $img->url() ?></div>
+            <div><?= $img->name() ?></div>
+        </li>
+    <?php endforeach ?>
+</ul>
+
+<h2>Pages: <?php echo $page->pages()->count() ?></h2>
+<ul>
+    <?php foreach($page->pages() as $img):?>
+        <li>
+            <div><?= $img->title() ?></div>
+        </li>
+    <?php endforeach ?>
+</ul>
+
+<h1>Favourite file: <?= $page->file('page')->url() ?></h1>
+
 </html>

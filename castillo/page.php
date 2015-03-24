@@ -9,8 +9,8 @@ class Page extends ValueCollection{
         parent::__construct();
         $this->__directory__ = $directory;
         $this->__name__ = normalize_identifier(pathinfo($directory, PATHINFO_FILENAME));
-        $this->__pages__ = array();
-        $this->__files__ = array();
+        $this->__pages__ = new ValueCollection();
+        $this->__files__ = new ValueCollection();
         $this->__template__ = 'default';
     }
 
@@ -26,12 +26,12 @@ class Page extends ValueCollection{
         return $this->__files__();
     }
 
-    public function page($name = FALSE) {
-        return array_get($this->__pages__, $name, null);
+    public function page($name) {
+        return $this->__pages__->$name();
     }
 
-    public function file($name = FALSE) {
-        return array_get($this->__files__, $name, null);
+    public function file($name) {
+        return $this->__files__->$name();
     }
 
     public function template() {
@@ -60,11 +60,11 @@ class Page extends ValueCollection{
 
     private function addFileInfo($filename) {
         $new_file = new File($this->__directory__, $filename);
-        return array_get_or_create($this->__files__, $new_file->name(), function() use ($new_file) {return $new_file;});
+        return array_get_or_create($this->__files__->__items__, $new_file->name(), function() use ($new_file) {return $new_file;});
     }
 
     public function addPage($page) {
-        return array_get_or_create($this->__pages__, $page->name(), function() use ($page) {return $page;});
+        return array_get_or_create($this->__pages__->__items__, $page->name(), function() use ($page) {return $page;});
 
     }
 

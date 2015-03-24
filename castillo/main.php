@@ -14,7 +14,7 @@ class Castillo
     public static $root_path;
 
     public function __construct() {
-        static::$root_path = (path_combine(__DIR__, '..'));
+        static::$root_path = realpath(path_combine(__DIR__, '..'));
     }
 
     private static function loadSite() {

@@ -7,7 +7,7 @@ class File extends ValueCollection {
         parent::__construct();
         $this->__directory__ = $directory;
         $this->__file__ = $file;
-        $this->__name__ = normalize_identifier(pathinfo($directory, PATHINFO_FILENAME));
+        $this->__name__ = normalize_identifier(pathinfo($file, PATHINFO_FILENAME));
     }
 
     public function name() {
