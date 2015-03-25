@@ -12,6 +12,10 @@ class UndefinedValue {
         return '[undefined]';
     }
 
+    public function undefined() {
+        return TRUE;
+    }
+
 }
 
 class ValueCollection implements IteratorAggregate {
@@ -23,6 +27,10 @@ class ValueCollection implements IteratorAggregate {
             throw new ErrorException("Foooo");
         foreach($data as $key => $val)
             $this->__items__[$key] = is_array($val) ? new ValueCollection($val) : $val;
+    }
+
+    public function undefined() {
+        return FALSE;
     }
 
     public function __construct($data = array()) {

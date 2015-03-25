@@ -7,11 +7,23 @@ require_once 'blueprint.php';
 class Page extends ValueCollection{
     public function __construct($directory) {
         parent::__construct();
+        $this->__parent__ = null;
         $this->__directory__ = $directory;
         $this->__name__ = normalize_identifier(pathinfo($directory, PATHINFO_FILENAME));
         $this->__pages__ = new ValueCollection();
         $this->__files__ = new ValueCollection();
         $this->__template__ = 'default';
+    }
+
+    public function parent() {
+        return $this->__parent__;
+    }
+
+    public function url() {
+        if (is_null($this->__parent__))
+            return $this->__name__;
+        else
+            return path_combine($this->__parent__->url(), $this->__name__);
     }
 
     public function name() {
@@ -52,7 +64,7 @@ class Page extends ValueCollection{
             case 'info':
                 $without_ext = pathinfo($filename, PATHINFO_FILENAME);
                 $info = $this->addFileInfo($without_ext);
-                $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
+                $yaml_content = Spyc::YAMLLoad(path_combine(Paths::$content, $this->__directory__, $filename));
                 $info->__append($yaml_content);
                 break;                
         }
@@ -68,20 +80,20 @@ class Page extends ValueCollection{
     }
 
     private function addYaml($filename) {
-        $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
         $this->__template__ = normalize_identifier(pathinfo($filename, PATHINFO_FILENAME));
-        $blueprint = Blueprint::get($this->__template__);        
-        $this->__append($blueprint->parse($yaml_content));
+        $data = Blueprint::get($this->__template__)->parseFile(path_combine(Paths::$content, $this->__directory__, $filename));
+        $this->__append($data);
     }
 
     public static function fromDirectory($dir) {
-        $iter = new DirectoryIterator($dir);
+        $iter = new DirectoryIterator(path_combine(Paths::$content, $dir));
         $page = new Page($dir);
         foreach ($iter as $item) {
             if ($item->isDot())
                 continue;
             if ($item->isDir()) {
                 $subpage = Page::fromDirectory(path_combine($dir, $item->getFilename()));
+                $subpage->__parent__ = $page;
                 $page->addPage($subpage);
             } else {
                 $page->addFile($item->getFilename());

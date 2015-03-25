@@ -13,7 +13,7 @@ class Castillo
 {
 
     private static function loadSite() {
-       return Page::fromDirectory(Paths::$content);
+       return Page::fromDirectory('');
     }
 
     private static function loadPage($site, $location) {
@@ -35,10 +35,14 @@ class Castillo
         return $filepath;
     }
 
+    private static function location() {
+        return explode('?', $_SERVER['REQUEST_URI'])[0];
+    }
+
     public static function render(){
         Blueprint::init();
         $site = static::loadSite();
-        $page = static::loadPage($site, $_SERVER["PATH_INFO"]);
+        $page = static::loadPage($site, self::location());
         include static::loadTemplate($page->template());
     }
         

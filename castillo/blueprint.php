@@ -11,6 +11,10 @@ abstract class FieldType {
 
     abstract public function parse($value);
 
+    public function parseFile($filepath) {     
+        return $this->parse(Spyc::YAMLLoad($filepath));
+    }
+
     public function init($blueprint) {
         $this->label = array_get($blueprint, 'label', '');
         $this->description = array_get($blueprint, 'description', '');
@@ -19,7 +23,11 @@ abstract class FieldType {
 
 }
 
-class EmptyFieldType {
+class EmptyFieldType extends FieldType {
+    public function __construct() {
+        parent::__construct('');
+    }
+
     public function parse($value) {
         return array();
     }

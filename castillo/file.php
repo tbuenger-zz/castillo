@@ -15,7 +15,7 @@ class File extends ValueCollection {
     }
 
     public function url() {
-        return path_combine($this->__directory__, $this->__file__);
+        return '/content' . path_combine($this->__directory__, $this->__file__);
     }
 }
 
