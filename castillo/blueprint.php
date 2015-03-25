@@ -19,6 +19,12 @@ abstract class FieldType {
 
 }
 
+class EmptyFieldType {
+    public function parse($value) {
+        return array();
+    }
+}
+
 class TextField extends FieldType {
     public function parse($value) {
         return is_null($value) ? '' : $value;
@@ -49,7 +55,7 @@ class CompoundField extends FieldType {
         parent::init($blueprint);
         $this->fields = array_get($blueprint, 'fields', array());
         foreach ($this->fields as $fieldname => &$subblueprint)
-            $subblueprint = Blueprint::createField($subblueprint);
+            $subblueprint = FieldFactory::create($subblueprint);
     }
 
     public function parse($value) {
@@ -85,7 +91,7 @@ class ListField extends FieldType {
 
 }
 
-abstract class Blueprint {
+abstract class FieldFactory {
 
     private static $fieldTypes = array(
         'text' => 'TextField',
@@ -100,9 +106,9 @@ abstract class Blueprint {
         'info' => 'TextField',
         );
 
-    public static function createField($blueprint) {
+    public static function create($blueprint, $type=null) {
         $typename = array_get($blueprint, 'type', null);
-        $type = array_get(Blueprint::$fieldTypes, $typename, null);
+        $type = array_get(self::$fieldTypes, $typename, $type);
         if (is_null($type))
             exit('Unknown field type: '.$typename);
         $field = new $type($typename);
@@ -110,17 +116,25 @@ abstract class Blueprint {
         return $field;
     }
 
-    private static function create($blueprint) {
-        $result = new CompoundField('blueprint');
-        $result->init($blueprint);
-        return $result; 
+}
+
+abstract class Blueprint {
+
+    private static $blueprints = array();
+
+    public static function init() {
+        foreach (new DirectoryIterator(Paths::$blueprints) as $file) {
+            if ($file->isFile()) {
+                $name = normalize_identifier($file->getBasename('.yaml'));
+                $yaml = Spyc::YAMLLoad($file->getPathname());
+                self::$blueprints[$name] = FieldFactory::create($yaml, 'CompoundField');
+            }
+        }
     }
 
-    public static function read($blueprintName) {
-        $yaml_blueprint = Spyc::YAMLLoad(path_combine(Paths::$blueprints, $blueprintName.'.yaml'));
-        return Blueprint::create($yaml_blueprint);
+    public static function get($name) {
+        return array_get(self::$blueprints, $name, new EmptyFieldType());
     }
-
 }
 
 ?>

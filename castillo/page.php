@@ -70,21 +70,20 @@ class Page extends ValueCollection{
     private function addYaml($filename) {
         $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
         $this->__template__ = normalize_identifier(pathinfo($filename, PATHINFO_FILENAME));
-        $blueprint = Blueprint::read($this->__template__);        
+        $blueprint = Blueprint::get($this->__template__);        
         $this->__append($blueprint->parse($yaml_content));
     }
 
     public static function fromDirectory($dir) {
         $iter = new DirectoryIterator($dir);
         $page = new Page($dir);
-        foreach( $iter as $item ) {
+        foreach ($iter as $item) {
             if ($item->isDot())
                 continue;
-            if( $item->isDir() ) {
+            if ($item->isDir()) {
                 $subpage = Page::fromDirectory(path_combine($dir, $item->getFilename()));
                 $page->addPage($subpage);
             } else {
-                // print files
                 $page->addFile($item->getFilename());
             }
         }

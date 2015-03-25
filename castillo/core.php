@@ -19,6 +19,8 @@ class ValueCollection implements IteratorAggregate {
     protected function __append($data) {
         if (is_a($data, 'ValueCollection'))
             return $this->__append($data->__items__);
+        if (is_null($data))
+            throw new ErrorException("Foooo");
         foreach($data as $key => $val)
             $this->__items__[$key] = is_array($val) ? new ValueCollection($val) : $val;
     }

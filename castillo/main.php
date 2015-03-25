@@ -36,6 +36,7 @@ class Castillo
     }
 
     public static function render(){
+        Blueprint::init();
         $site = static::loadSite();
         $page = static::loadPage($site, $_SERVER["PATH_INFO"]);
         include static::loadTemplate($page->template());
