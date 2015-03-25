@@ -39,62 +39,53 @@ class Page extends ValueCollection{
     }
 
     public function addFile($filename) {
-        $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        if ($ext == 'yaml') {
-            $this->addYaml($filename);
-        }
+        switch (pathinfo($filename, PATHINFO_EXTENSION)) {
+            case 'yaml':
+                $this->addYaml($filename);
+                break;
 
-        if ($ext == 'jpeg') {
-            $info = $this->addFileInfo($filename);
-            $info->__append(array('url'=>$filename));
-        }
+            case 'jpeg':
+                $info = $this->addFileInfo($filename);
+                $info->__append(array('url' => $filename));
+                break;
 
-        if ($ext == 'info') {
-            $without_ext = pathinfo($filename, PATHINFO_FILENAME);
-            $info = $this->addFileInfo($without_ext);
-
-            $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
-            $info->__append($yaml_content);
+            case 'info':
+                $without_ext = pathinfo($filename, PATHINFO_FILENAME);
+                $info = $this->addFileInfo($without_ext);
+                $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
+                $info->__append($yaml_content);
+                break;                
         }
     }
 
     private function addFileInfo($filename) {
-        $new_file = new File($this->__directory__, $filename);
-        return array_get_or_create($this->__files__->__items__, $new_file->name(), function() use ($new_file) {return $new_file;});
+        $fileinfo = new File($this->__directory__, $filename);
+        return array_get_or_create($this->__files__->__items__, $fileinfo->name(), function() use ($fileinfo) {return $fileinfo;});
     }
 
     public function addPage($page) {
         return array_get_or_create($this->__pages__->__items__, $page->name(), function() use ($page) {return $page;});
-
     }
 
     private function addYaml($filename) {
         $yaml_content = Spyc::YAMLLoad(path_combine($this->__directory__, $filename));
         $this->__template__ = normalize_identifier(pathinfo($filename, PATHINFO_FILENAME));
-
-        // read blueprint from template and parse then yaml
-        $blueprint = Blueprint::read($this->__template__);
-
-        
+        $blueprint = Blueprint::read($this->__template__);        
         $this->__append($blueprint->parse($yaml_content));
     }
 
     public static function fromDirectory($dir) {
-        // open handler for the directory
         $iter = new DirectoryIterator($dir);
-
         $page = new Page($dir);
-
         foreach( $iter as $item ) {
-            // make sure you don't try to access the current dir or the parent
-            if (!$item->isDot()) {
-                if( $item->isDir() ) {
-                    $subpage = Page::fromDirectory(path_combine($dir, $item->getFilename()));
-                    $page->addPage($subpage);
-                } else {
-                    // print files
-                    $page->addFile($item->getFilename());
-                }
+            if ($item->isDot())
+                continue;
+            if( $item->isDir() ) {
+                $subpage = Page::fromDirectory(path_combine($dir, $item->getFilename()));
+                $page->addPage($subpage);
+            } else {
+                // print files
+                $page->addFile($item->getFilename());
             }
         }
         return $page;

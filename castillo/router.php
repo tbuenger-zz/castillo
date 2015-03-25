@@ -14,14 +14,13 @@ class ErrorPage extends Page {
 class Router {
 
     public static function locatePage($site, $location) {
-        // split into parts and remove emtpy parts
-        $parts = array_filter(explode("/", $location), 'strlen');
+        // split and remove emtpy parts
+        $parts = array_filter(split("/", $location), 'strlen'); 
         $current_page = $site;
         foreach ($parts as $part) {
             $part = normalize_identifier($part);
             $next_page = $current_page->page($part);
-            if (!$next_page)
-            {                
+            if (!$next_page) {                
                 error_log('Castillo: No page for \''.$location.'\''); 
                 return new ErrorPage($site->directory());
             }
