@@ -11,14 +11,9 @@ require_once 'router.php';
 
 class Castillo
 {
-    public static $root_path;
-
-    public function __construct() {
-        static::$root_path = realpath(path_combine(__DIR__, '..'));
-    }
 
     private static function loadSite() {
-       return Page::fromDirectory(path_combine(static::$root_path, 'content'));
+       return Page::fromDirectory(Paths::$content);
     }
 
     private static function loadPage($site, $location) {
@@ -28,7 +23,7 @@ class Castillo
 
     private static function loadTemplate($template) {
         $filename = $template.'.php';
-        $filepath = realpath(path_combine(static::$root_path, 'templates', $filename));
+        $filepath = realpath(path_combine(Paths::$templates, $filename));
 
         if (empty($filepath)){
             error_log('Castillo: No template named \''.$filename.'\''); 
@@ -40,7 +35,7 @@ class Castillo
         return $filepath;
     }
 
-    public function render(){
+    public static function render(){
         $site = static::loadSite();
         $page = static::loadPage($site, $_SERVER["PATH_INFO"]);
         include static::loadTemplate($page->template());

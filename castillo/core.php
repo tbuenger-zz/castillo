@@ -19,13 +19,8 @@ class ValueCollection implements IteratorAggregate {
     protected function __append($data) {
         if (is_a($data, 'ValueCollection'))
             return $this->__append($data->__items__);
-        foreach($data as $key => $val) {
-            if (is_array($val))
-                $val = new ValueCollection($val);
-
-            $this->__items__[$key] = $val;
-        }
-        
+        foreach($data as $key => $val)
+            $this->__items__[$key] = is_array($val) ? new ValueCollection($val) : $val;
     }
 
     public function __construct($data = array()) {
@@ -40,34 +35,8 @@ class ValueCollection implements IteratorAggregate {
             return $this->__items__[$method];
         return new UndefinedValue();
     }
-
-    /*
-    public function __toString() {
-        $result = '{';
-        foreach($this->__items__ as $key => $val)
-        {
-            $result .= $key . ' => ';
-            if (is_a ($val, 'DateTime'))
-            {
-                $result .= $val->format('c'); 
-            }
-            else
-            {
-                $result .= $val;
-            }
-            $result .= '; ';
-        }
-        return rtrim($result, '; ').'}';
-    }
-    */
  
-    public function toArray()
-    {
-        return $this->__items__;
-    }
- 
-    public function getIterator()
-    {
+    public function getIterator() {
         return new ArrayIterator($this->__items__);
     }
 
@@ -92,7 +61,6 @@ class ValueCollection implements IteratorAggregate {
     public function filter($condition) {
         return new ValueCollection(array_filter($this->__items__, $condition));
     }
-
 
 }
 
