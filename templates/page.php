@@ -1,4 +1,5 @@
 <?= snippet('header') ?>
+<script src="/assets/main.js"></script>
 <h1><?= $page->title() ?></h1>
 <p>Diese Seite wurde erstellt von <?= $page->creator() ?> 
 am <?= $page->created()->format('d.m.Y') ?>.</p>

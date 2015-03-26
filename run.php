@@ -1,6 +1,8 @@
 <?php
 // router.php
-if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])) {
+if (preg_match('/^\/assets\//', $_SERVER["REQUEST_URI"])) {
+    return false;    // serve the requested resource as-is.
+} else if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])) {
     return false;    // serve the requested resource as-is.
 } else { 
     include_once 'index.php';
