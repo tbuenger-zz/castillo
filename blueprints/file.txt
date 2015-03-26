@@ -1,0 +1,7 @@
+fields:
+  title: 
+    type: text
+    label: Titel des Bildes
+  description:
+    type: text
+    label: Beschreibungstext

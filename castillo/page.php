@@ -64,8 +64,8 @@ class Page extends ValueCollection{
             case 'info':
                 $without_ext = pathinfo($filename, PATHINFO_FILENAME);
                 $info = $this->addFileInfo($without_ext);
-                $yaml_content = Spyc::YAMLLoad(Path::below(Path::$content, path_combine($this->__directory__, $filename)));
-                $info->__append($yaml_content);
+                $data = Blueprint::get('file')->parseFile(Path::below(Path::$content, path_combine($this->__directory__, $filename)));
+                $info->__append($data);
                 break;                
         }
     }

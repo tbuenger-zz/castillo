@@ -21,6 +21,7 @@ am <?= $page->created()->format('d.m.Y') ?>.</p>
         <li>
             <div><?= $img->url() ?></div>
             <div><?= $img->name() ?></div>
+            <div><?= $img->title() ?></div>
         </li>
     <?php endforeach ?>
 </ul>
