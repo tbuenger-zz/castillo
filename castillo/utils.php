@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('Europe/Berlin');
+
 function path_combine() {
     return join(DIRECTORY_SEPARATOR, func_get_args());
 }
