@@ -9,13 +9,20 @@ require_once 'utils.php';
 require_once 'page.php';
 require_once 'router.php';
 
+$site = null;
+$page = null;
+
 function snippet($snippet_name) {
-    include Path::below(Path::$snippets, $snippet_name.'php');
+    global $site, $page;
+    $path = Path::below(Path::$snippets, $snippet_name.'.php');
+    if ($path)
+        include $path;
+    else
+        error_log('Castillo: No snippet named  \''.$snippet_name.'\''); 
 }
 
 class Castillo
 {
-
     private static function loadSite() {
        return Page::fromDirectory('');
     }
@@ -42,14 +49,14 @@ class Castillo
         return explode('?', $_SERVER['REQUEST_URI'])[0];
     }
 
-    public static function render(){
+    public static function render() {
+        global $site, $page;
         Blueprint::init();
-        $site = static::loadSite();
-        $page = static::loadPage($site, self::location());
-        include static::loadTemplate($page->template());
+        $site = Castillo::loadSite();
+        $page = Castillo::loadPage($site, self::location());
+
+        include Castillo::loadTemplate($page->template());
     }
         
 }
-
-
 ?>
