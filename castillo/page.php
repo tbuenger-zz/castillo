@@ -52,7 +52,7 @@ class Page extends ValueCollection{
 
     public function addFile($filename) {
         switch (pathinfo($filename, PATHINFO_EXTENSION)) {
-            case 'yaml':
+            case 'txt':
                 $this->addYaml($filename);
                 break;
 

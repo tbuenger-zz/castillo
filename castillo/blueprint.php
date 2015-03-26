@@ -133,7 +133,7 @@ abstract class Blueprint {
     public static function init() {
         foreach (new DirectoryIterator(Path::$blueprints) as $file) {
             if ($file->isFile()) {
-                $name = normalize_identifier($file->getBasename('.yaml'));
+                $name = normalize_identifier($file->getBasename('.txt'));
                 $yaml = Spyc::YAMLLoad($file->getPathname());
                 self::$blueprints[$name] = FieldFactory::create($yaml, 'CompoundField');
             }
