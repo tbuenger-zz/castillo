@@ -1,4 +1,4 @@
-<html>
+<?= snippet('header') ?>
 <h1><?= $page->title() ?></h1>
 <p>Diese Seite wurde erstellt von <?= $page->creator() ?> 
 am <?= $page->created()->format('d.m.Y') ?>.</p>
@@ -27,9 +27,9 @@ am <?= $page->created()->format('d.m.Y') ?>.</p>
 
 <h2>Pages: <?php echo $page->pages()->count() ?></h2>
 <ul>
-    <?php foreach($page->pages() as $img):?>
+    <?php foreach($page->pages() as $p):?>
         <li>
-            <div><?= $img->title() ?></div>
+            <div><a href="<?= $p->url() ?>"><?= $p->title() ?></a></div>
         </li>
     <?php endforeach ?>
 </ul>

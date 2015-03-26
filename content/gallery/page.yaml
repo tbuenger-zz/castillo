@@ -1,0 +1,30 @@
+foo: bar
+title: Meine erste App
+created: 1988-06-29
+creator: Tommi
+bar:
+    #time: 2013-03-01T16:15:09+01:00
+    time: 1.12.2014
+    foo: bar
+    bar: baz
+    baz:
+        - "jip"
+        - "das"
+        - "auch"
+performances:
+    -
+        date: 25.03.2014
+        place: Berlin
+        house: Staatsoper
+        role: Donna Anna
+    -
+        date: 22.01.2020
+        place: Mailand
+        house: Scala
+        role: Fritz
+    -
+        date: 01.10.2015
+        place: Wien
+        house: Oper
+        role: Lalala
+
