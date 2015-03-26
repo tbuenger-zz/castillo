@@ -1,6 +1,8 @@
 <?php
 // router.php
-if (preg_match('/^\/panel\/?$/', $_SERVER["REQUEST_URI"])) {
+if (preg_match('/^\/castillo\/panel\/static\//', $_SERVER["REQUEST_URI"])) {
+    return false;
+} else if (preg_match('/^\/panel\/?$/', $_SERVER["REQUEST_URI"])) {
     include_once 'castillo/panel/index.php';
 } else if (preg_match('/^\/panel\/api([\/\?#].*)?$/', $_SERVER["REQUEST_URI"])) {
     include_once 'castillo/panel/api.php';

@@ -7,7 +7,7 @@ function path_combine() {
 }
 
 class Path {
-    private static $root;
+    public static $root;
     public static $content;
     public static $templates;
     public static $blueprints;
