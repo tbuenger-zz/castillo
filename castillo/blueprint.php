@@ -131,7 +131,7 @@ abstract class Blueprint {
     private static $blueprints = array();
 
     public static function init() {
-        foreach (new DirectoryIterator(Paths::$blueprints) as $file) {
+        foreach (new DirectoryIterator(Path::$blueprints) as $file) {
             if ($file->isFile()) {
                 $name = normalize_identifier($file->getBasename('.yaml'));
                 $yaml = Spyc::YAMLLoad($file->getPathname());

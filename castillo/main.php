@@ -9,6 +9,10 @@ require_once 'utils.php';
 require_once 'page.php';
 require_once 'router.php';
 
+function snippet($snippet_name) {
+    include Path::below(Path::$snippets, $snippet_name.'php');
+}
+
 class Castillo
 {
 
@@ -22,15 +26,14 @@ class Castillo
     }
 
     private static function loadTemplate($template) {
-        $filename = $template.'.php';
-        $filepath = realpath(path_combine(Paths::$templates, $filename));
+        $filepath = Path::below(Path::$templates, $template.'.php');
 
         if (empty($filepath)){
-            error_log('Castillo: No template named \''.$filename.'\''); 
+            error_log('Castillo: No template named \''.$template.'\''); 
             return 'error.php';
         }
 
-        error_log('Castillo: Loaded template \''.$filename.'\''); 
+        error_log('Castillo: Loaded template \''.$template.'\''); 
 
         return $filepath;
     }

@@ -64,7 +64,7 @@ class Page extends ValueCollection{
             case 'info':
                 $without_ext = pathinfo($filename, PATHINFO_FILENAME);
                 $info = $this->addFileInfo($without_ext);
-                $yaml_content = Spyc::YAMLLoad(path_combine(Paths::$content, $this->__directory__, $filename));
+                $yaml_content = Spyc::YAMLLoad(Path::below(Path::$content, path_combine($this->__directory__, $filename)));
                 $info->__append($yaml_content);
                 break;                
         }
@@ -81,12 +81,12 @@ class Page extends ValueCollection{
 
     private function addYaml($filename) {
         $this->__template__ = normalize_identifier(pathinfo($filename, PATHINFO_FILENAME));
-        $data = Blueprint::get($this->__template__)->parseFile(path_combine(Paths::$content, $this->__directory__, $filename));
+        $data = Blueprint::get($this->__template__)->parseFile(Path::below(Path::$content, path_combine($this->__directory__, $filename)));
         $this->__append($data);
     }
 
     public static function fromDirectory($dir) {
-        $iter = new DirectoryIterator(path_combine(Paths::$content, $dir));
+        $iter = new DirectoryIterator(Path::below(Path::$content, $dir));
         $page = new Page($dir);
         foreach ($iter as $item) {
             if ($item->isDot())

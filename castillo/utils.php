@@ -4,21 +4,30 @@ function path_combine() {
     return join(DIRECTORY_SEPARATOR, func_get_args());
 }
 
-class Paths {
+class Path {
+    private static $root;
     public static $content;
     public static $templates;
     public static $blueprints;
     public static $snippets;
     public static function init() {
-        $root = realpath(path_combine(__DIR__, '..'));
-        self::$content = realpath(path_combine($root, 'content'));
-        self::$templates = realpath(path_combine($root, 'templates'));
-        self::$blueprints = realpath(path_combine($root, 'blueprints'));
-        self::$snippets = realpath(path_combine($root, 'snippets'));
+        self::$root = realpath(path_combine(__DIR__, '..'));
+        self::$content = realpath(path_combine(self::$root, 'content'));
+        self::$templates = realpath(path_combine(self::$root, 'templates'));
+        self::$blueprints = realpath(path_combine(self::$root, 'blueprints'));
+        self::$snippets = realpath(path_combine(self::$root, 'snippets'));
+    }
+
+    public static function below($base, $path) {
+        $base = realpath($base);
+        $path = realpath(path_combine($base, $path));
+        if (strncmp($path, $base, strlen($base) != 0))
+            return '';
+        return $path;
     }
 }
 
-Paths::init();
+Path::init();
 
 function array_get($array, $key, $default = null){
     if (isset($array[$key]) || array_key_exists($key, $array))
